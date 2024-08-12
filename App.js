@@ -24,6 +24,11 @@ const HomeStackScreen = () => (
       component={Home}
       options={{headerShown: false}}
     />
+    <HomeStack.Screen
+      name="Goal"
+      component={Goal}
+      options={{headerShown: false}}
+    />
   </HomeStack.Navigator>
 );
 
