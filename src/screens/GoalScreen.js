@@ -11,6 +11,12 @@ import {useNavigation} from '@react-navigation/native';
 const Goal = () => {
   const [electricity, setElectricity] = React.useState('');
   const navigation = useNavigation();
+
+  const handleElectricityChange = text => {
+    const numericValue = text.replace(/[^0-9]/g, ''); // 숫자가 아닌 문자 제거
+    setElectricity(numericValue);
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -18,13 +24,13 @@ const Goal = () => {
       </View>
       <View style={styles.goal}>
         <TextInput
-          value={electricity}
+          value={`${electricity}kWh`}
           placeholder="0kWh"
-          onChangeText={setElectricity}
+          onChangeText={handleElectricityChange}
           keyboardType="numeric"
           style={styles.goalElec}></TextInput>
         <View style={styles.goalMoney}>
-          <Text style={styles.goalText}>127,280원</Text>
+          <Text style={styles.goalText}>원</Text>
         </View>
       </View>
       <TouchableOpacity
@@ -50,7 +56,7 @@ const styles = StyleSheet.create({
   },
   goal: {
     width: '100%',
-    height: '50%',
+    height: '65%',
     alignItems: 'center',
     marginTop: 93,
   },
