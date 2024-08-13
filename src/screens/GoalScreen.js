@@ -1,8 +1,15 @@
 import React from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const Goal = () => {
+  const [electricity, setElectricity] = React.useState('');
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
@@ -10,7 +17,12 @@ const Goal = () => {
         <Text style={styles.title}>목표 전력량 설정</Text>
       </View>
       <View style={styles.goal}>
-        <Text style={styles.goalElec}>500kWh</Text>
+        <TextInput
+          value={electricity}
+          placeholder="0kWh"
+          onChangeText={setElectricity}
+          keyboardType="numeric"
+          style={styles.goalElec}></TextInput>
         <View style={styles.goalMoney}>
           <Text style={styles.goalText}>127,280원</Text>
         </View>

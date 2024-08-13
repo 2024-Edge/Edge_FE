@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
+import SplashScreen from 'react-native-splash-screen';
 import Header from './src/components/Header';
 
 import Home from './src/screens/HomeScreen';
@@ -63,6 +64,14 @@ const GrowStackScreen = () => (
 );
 
 const App = () => {
+  useEffect(() => {
+    if (SplashScreen) {
+      SplashScreen.hide();
+    } else {
+      console.error('SplashScreen is null');
+    }
+  }, []);
+
   return (
     <NavigationContainer>
       <Header />
