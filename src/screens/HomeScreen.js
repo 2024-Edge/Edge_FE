@@ -92,7 +92,12 @@ const Home = ({navigation}) => {
               </View>
             </View>
           </View>
-          <Image source={require('../img/plus.png')} style={styles.plusImage} />
+          <TouchableOpacity onPress={() => navigation.navigate('Control')}>
+            <Image
+              source={require('../img/plus.png')}
+              style={styles.plusImage}
+            />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

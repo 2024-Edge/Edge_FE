@@ -21,7 +21,6 @@ const HomeStack = createStackNavigator();
 const MypageStack = createStackNavigator();
 const GrowStack = createStackNavigator();
 
-// 각 탭에 대한 스택 네비게이터 정의
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen
@@ -32,6 +31,11 @@ const HomeStackScreen = () => (
     <HomeStack.Screen
       name="Goal"
       component={Goal}
+      options={{headerShown: false}}
+    />
+    <HomeStack.Screen
+      name="Control"
+      component={Control}
       options={{headerShown: false}}
     />
   </HomeStack.Navigator>
@@ -63,12 +67,12 @@ const AuthStackScreen = () => (
     <AuthStack.Screen
       name="Join"
       component={Join}
-      options={{headerShown: false}} // 헤더 없애기
+      options={{headerShown: false}}
     />
     <AuthStack.Screen
       name="Signup"
       component={Signup}
-      options={{headerShown: false}} // 헤더 없애기
+      options={{headerShown: false}}
     />
     <AuthStack.Screen
       name="Home"
@@ -128,12 +132,7 @@ const TabNavigator = () => (
 
 const App = () => {
   useEffect(() => {
-    // 스플래시 스크린 숨기기
-    if (SplashScreen) {
-      SplashScreen.hide();
-    } else {
-      console.error('SplashScreen is null');
-    }
+    SplashScreen.hide();
   }, []);
 
   return (
