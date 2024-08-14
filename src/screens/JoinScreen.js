@@ -28,13 +28,17 @@ const Join = ({navigation}) => {
           secureTextEntry={true}
           onChangeText={setPwd}
           style={styles.input}></TextInput>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Home')}
+          style={styles.btn}>
           <Text style={styles.btnText}>로그인</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.signup}>
         <Text style={styles.signupText}>회원으로 가입하시겠습니끼?</Text>
-        <TouchableOpacity style={styles.signupBtn}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Signup')}
+          style={styles.signupBtn}>
           <Text style={styles.signupBtnText}>회원가입</Text>
         </TouchableOpacity>
       </View>
