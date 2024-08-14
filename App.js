@@ -127,8 +127,6 @@ const TabNavigator = () => (
 );
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
     // 스플래시 스크린 숨기기
     if (SplashScreen) {
@@ -136,28 +134,14 @@ const App = () => {
     } else {
       console.error('SplashScreen is null');
     }
-
-    // 인증 상태를 확인하는 로직 추가
-    const checkAuthStatus = async () => {
-      // 여기서는 예시로 무조건 false를 반환합니다.
-      // 실제로는 AsyncStorage 등에서 인증 상태를 가져오는 로직을 추가해야 합니다.
-      const isUserAuthenticated = false; // 인증 여부를 가져오는 로직
-      setIsAuthenticated(isUserAuthenticated);
-    };
-
-    checkAuthStatus();
   }, []);
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
-        <>
-          <Header /> {/* 인증된 사용자는 헤더를 표시합니다. */}
-          <TabNavigator />
-        </>
-      ) : (
-        <AuthStackScreen /> // 인증되지 않은 사용자는 인증 스택 네비게이터를 표시합니다.
-      )}
+      <>
+        <Header />
+        <TabNavigator />
+      </>
     </NavigationContainer>
   );
 };
