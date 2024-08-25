@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Image} from 'react-native';
+import {Image, View, ActivityIndicator} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -16,7 +16,6 @@ import Control from './src/screens/ControlScreen';
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
-const MainStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const MypageStack = createStackNavigator();
 const GrowStack = createStackNavigator();
@@ -74,11 +73,6 @@ const AuthStackScreen = () => (
       component={Signup}
       options={{headerShown: false}}
     />
-    <AuthStack.Screen
-      name="Home"
-      component={Home}
-      options={{headerShown: false}}
-    />
   </AuthStack.Navigator>
 );
 
@@ -91,8 +85,8 @@ const TabNavigator = () => (
 
         if (route.name === 'Home') {
           iconName = focused
-            ? require('./src/img/home_check.png') // 활성화된 탭일 때 이미지
-            : require('./src/img/home.png'); // 비활성화된 탭일 때 이미지
+            ? require('./src/img/home_check.png')
+            : require('./src/img/home.png');
         } else if (route.name === 'Grow') {
           iconName = focused
             ? require('./src/img/logo2.png')
@@ -103,13 +97,12 @@ const TabNavigator = () => (
             : require('./src/img/user.png');
         }
 
-        // 이미지를 렌더링합니다.
         return <Image source={iconName} style={{width: 37, height: 36}} />;
       },
       tabBarLabel: () => null,
       tabBarStyle: {
-        height: 80, // 탭 높이를 80으로 설정
-        paddingBottom: 10, // 아이콘과 탭의 아래 여백
+        height: 80,
+        paddingBottom: 10,
       },
     })}>
     <Tab.Screen
@@ -131,15 +124,48 @@ const TabNavigator = () => (
 );
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
+    // 스플래쉬 화면 숨기기
     SplashScreen.hide();
+
+    // 로그인 상태를 확인하는 로직 (예: AsyncStorage 또는 SecureStore를 통해 로그인 상태 확인)
+    const checkLoginStatus = async () => {
+      try {
+        // 로그인 상태를 가져오는 로직을 구현 (예: 토큰이 있는지 확인)
+        const userToken = null; // 예시로 null로 설정, 실제로는 저장된 토큰을 가져옴
+        setIsLoggedIn(!!userToken);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkLoginStatus();
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="#4BA568" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
       <>
-        <Header />
-        <TabNavigator />
+        {isLoggedIn ? (
+          <>
+            <Header />
+            <TabNavigator />
+          </>
+        ) : (
+          <AuthStackScreen />
+        )}
       </>
     </NavigationContainer>
   );

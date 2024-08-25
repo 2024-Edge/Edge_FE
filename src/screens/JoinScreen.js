@@ -6,31 +6,78 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+// axios 인터셉터 설정
+axios.interceptors.request.use(
+  async config => {
+    const sessionId = await AsyncStorage.getItem('sessionId'); // 저장된 세션 ID를 가져오기
+    if (sessionId) {
+      config.headers['Session-ID'] = sessionId; // 요청 헤더에 세션 ID 추가
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
 
 const Join = ({navigation}) => {
-  const [id, setId] = useState();
-  const [pwd, setPwd] = useState();
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/users/login',
+        {
+          username: username,
+          password: password,
+        },
+      );
+      console.log(response.data);
+
+      if (response.status === 200) {
+        const sessionId = response.data.sessionId; // 서버에서 받은 세션 ID
+        await AsyncStorage.setItem('sessionId', sessionId); // 세션 ID를 AsyncStorage에 저장
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('Error1', response.data.message || 'Failed to log in');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      if (error.response) {
+        Alert.alert(
+          'Error2',
+          error.response.data.message || 'Failed to log in',
+        );
+      } else if (error.request) {
+        Alert.alert('Error3', 'No response from server');
+      } else {
+        Alert.alert('Error4', 'An error occurred');
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Image source={require('../img/logo4.png')} style={styles.logo}></Image>
       <View style={styles.join}>
         <TextInput
-          value={id}
+          value={username}
           placeholder="아이디를 입력해주세요"
-          keyboardType="text"
-          onChangeText={setId}
+          onChangeText={setUsername}
           style={styles.input}></TextInput>
         <TextInput
-          value={pwd}
+          value={password}
           placeholder="비밀번호를 입력해주세요"
           secureTextEntry={true}
-          onChangeText={setPwd}
+          onChangeText={setPassword}
           style={styles.input}></TextInput>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
-          style={styles.btn}>
+        <TouchableOpacity onPress={handleLogin} style={styles.btn}>
           <Text style={styles.btnText}>로그인</Text>
         </TouchableOpacity>
       </View>
