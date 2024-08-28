@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Image, View, ActivityIndicator} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -136,12 +137,11 @@ const App = () => {
     // 스플래쉬 화면 숨기기
     SplashScreen.hide();
 
-    // 로그인 상태를 확인하는 로직 (예: AsyncStorage 또는 SecureStore를 통해 로그인 상태 확인)
+    // 로그인 상태를 확인
     const checkLoginStatus = async () => {
       try {
-        // 로그인 상태를 가져오는 로직을 구현 (예: 토큰이 있는지 확인)
-        const userToken = null; // 예시로 null로 설정, 실제로는 저장된 토큰을 가져옴
-        setIsLoggedIn(!!userToken);
+        const userToken = await AsyncStorage.getItem('accessToken');
+        setIsLoggedIn(!!userToken); // 토큰이 존재하면 true, 없으면 false
       } catch (e) {
         console.error(e);
       } finally {

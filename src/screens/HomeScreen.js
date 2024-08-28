@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import Logout from '../components/logout';
 import DonutChart from '../components/DonutChart';
 import ModalInfo from '../components/ModalInfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -144,6 +145,7 @@ const Home = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+        <Logout navigation={navigation} />
       </ScrollView>
     </View>
   );
