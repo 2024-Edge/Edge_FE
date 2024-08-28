@@ -9,56 +9,42 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-
-// axios 인터셉터 설정
-axios.interceptors.request.use(
-  async config => {
-    const sessionId = await AsyncStorage.getItem('sessionId'); // 저장된 세션 ID를 가져오기
-    if (sessionId) {
-      config.headers['Session-ID'] = sessionId; // 요청 헤더에 세션 ID 추가
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  },
-);
 
 const Join = ({navigation}) => {
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:8081/api/users/login',
-        {
+      const response = await fetch('http://3.39.5.55:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           username: username,
           password: password,
-        },
-      );
-      console.log(response.data);
+        }),
+      });
+      console.log('Response Headers:', [...response.headers]);
 
-      if (response.status === 200) {
-        const sessionId = response.data.sessionId; // 서버에서 받은 세션 ID
-        await AsyncStorage.setItem('sessionId', sessionId); // 세션 ID를 AsyncStorage에 저장
-        navigation.navigate('Home');
+      if (response.ok) {
+        const accessToken = response.headers.get('accesstoken');
+
+        if (accessToken) {
+          await AsyncStorage.setItem('accessToken', accessToken);
+
+          navigation.navigate('Home');
+        } else {
+          Alert.alert('Error', 'No access token found in the response');
+        }
       } else {
-        Alert.alert('Error1', response.data.message || 'Failed to log in');
+        const data = await response.json();
+        Alert.alert('Error1', data.message || 'Failed to log in');
       }
     } catch (error) {
       console.log('Error:', error);
-      if (error.response) {
-        Alert.alert(
-          'Error2',
-          error.response.data.message || 'Failed to log in',
-        );
-      } else if (error.request) {
-        Alert.alert('Error3', 'No response from server');
-      } else {
-        Alert.alert('Error4', 'An error occurred');
-      }
+      Alert.alert('Error2', 'An error occurred');
     }
   };
 

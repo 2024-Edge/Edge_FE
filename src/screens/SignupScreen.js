@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import axios from 'axios';
 
 const Signup = ({navigation}) => {
   const [formdata, setFormdata] = useState({
@@ -26,36 +25,33 @@ const Signup = ({navigation}) => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:8081/api/users/register',
-        {
+      const response = await fetch('http://3.39.5.55:8080/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           username: formdata.username,
           password: formdata.password,
           name: formdata.name,
-        },
-      );
+        }),
+      });
 
       console.log('Response:', response);
 
-      if (response.status === 201) {
-        // 일반적으로 생성된 리소스에 대해 201 상태 코드를 반환
+      if (response.ok) {
+        // HTTP 상태 코드가 200번대인 경우
         Alert.alert('Success', 'Signed up successfully');
-        navigation.navigate('Join'); // 회원가입 성공 시 로그인 화면으로 이동
+        const data = await response.json();
+        console.log(data);
+        navigation.navigate('Join');
       } else {
-        Alert.alert('Error1', response.data.message || 'Failed to sign up');
+        const data = await response.json();
+        Alert.alert('Error1', data.message || 'Failed to sign up');
       }
     } catch (error) {
       console.log('Error:', error);
-      if (error.response) {
-        Alert.alert(
-          'Error2',
-          error.response.data.message || 'Failed to sign up',
-        );
-      } else if (error.request) {
-        Alert.alert('Error3', 'No response from server');
-      } else {
-        Alert.alert('Error4', 'An error occurred');
-      }
+      Alert.alert('Error2', 'An error occurred');
     }
   };
 

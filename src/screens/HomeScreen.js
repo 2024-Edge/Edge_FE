@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,9 +8,11 @@ import {
   ScrollView,
   Switch,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import DonutChart from '../components/DonutChart';
 import ModalInfo from '../components/ModalInfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,11 +31,54 @@ const Home = ({navigation}) => {
   const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
   const data = [];
 
+  const [userdata, setUserdata] = useState('');
+
+  const fetchUserdata = async () => {
+    try {
+      // AsyncStorage에서 액세스 토큰 가져오기
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken) {
+        console.log('Access Token:', accessToken);
+        const response = await fetch('http://3.39.5.55:8080/mypage', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${accessToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('User Data:', result);
+          setUserdata(result.data);
+        } else {
+          const errorData = await response.json();
+          Alert.alert(
+            'Error1',
+            errorData.message || 'Failed to fetch user data',
+          );
+        }
+      } else {
+        Alert.alert('Error2', 'No access token found');
+      }
+    } catch (error) {
+      console.log('Error3:', error);
+      Alert.alert('Error', 'An error occurred while fetching user data');
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 사용자 데이터 가져오기
+  useEffect(() => {
+    fetchUserdata();
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.goal}>
-          <Text style={styles.goalTitle}>김민성님의{'\n'}소비량 통계</Text>
+          <Text style={styles.goalTitle}>
+            {userdata.name}님의{'\n'}소비량 통계
+          </Text>
           <DonutChart
             data={data}
             radius={100}

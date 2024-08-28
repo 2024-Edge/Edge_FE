@@ -73,6 +73,11 @@ const AuthStackScreen = () => (
       component={Signup}
       options={{headerShown: false}}
     />
+    <AuthStack.Screen
+      name="Home"
+      component={Home}
+      options={{headerShown: false}}
+    />
   </AuthStack.Navigator>
 );
 
