@@ -38,6 +38,11 @@ const HomeStackScreen = () => (
       component={Control}
       options={{headerShown: false}}
     />
+    <HomeStack.Screen
+      name="Join"
+      component={Join}
+      options={{headerShown: false}}
+    />
   </HomeStack.Navigator>
 );
 

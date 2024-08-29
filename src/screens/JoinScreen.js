@@ -16,7 +16,7 @@ const Join = ({navigation}) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://3.39.5.55:8080/login', {
+      const response = await fetch('https://edge-backend.store/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

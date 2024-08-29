@@ -40,7 +40,7 @@ const Home = ({navigation}) => {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
         console.log('Access Token:', accessToken);
-        const response = await fetch('http://3.39.5.55:8080/mypage', {
+        const response = await fetch('https://edge-backend.store/mypage', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

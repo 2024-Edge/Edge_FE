@@ -25,7 +25,7 @@ const Signup = ({navigation}) => {
 
   const handleSignup = async () => {
     try {
-      const response = await fetch('http://3.39.5.55:8080/register', {
+      const response = await fetch('https://edge-backend.store/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
