@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,10 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../../App'; // AuthContext import
 
 const Join = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const {setIsLoggedIn} = useContext(AuthContext); // AuthContext 사용
 
   const handleLogin = async () => {
     try {
@@ -26,25 +28,23 @@ const Join = ({navigation}) => {
           password: password,
         }),
       });
-      console.log('Response Headers:', [...response.headers]);
 
       if (response.ok) {
         const accessToken = response.headers.get('accesstoken');
 
         if (accessToken) {
           await AsyncStorage.setItem('accessToken', accessToken);
-
-          navigation.navigate('Home');
+          setIsLoggedIn(true); // 로그인 상태를 true로 변경
         } else {
           Alert.alert('Error', 'No access token found in the response');
         }
       } else {
         const data = await response.json();
-        Alert.alert('Error1', data.message || 'Failed to log in');
+        Alert.alert('Error', data.message || 'Failed to log in');
       }
     } catch (error) {
       console.log('Error:', error);
-      Alert.alert('Error2', 'An error occurred');
+      Alert.alert('Error', 'An error occurred');
     }
   };
 
