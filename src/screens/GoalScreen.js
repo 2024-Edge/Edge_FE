@@ -100,7 +100,7 @@ const Goal = () => {
 
         if (response.ok) {
           Alert.alert('Success', '목표 전력량이 성공적으로 저장되었습니다.');
-          navigation.navigate('Home');
+          navigation.navigate('HomeMain');
         } else {
           const errorData = await response.json();
           Alert.alert(

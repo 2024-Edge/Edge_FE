@@ -44,7 +44,7 @@ const Signup = ({navigation}) => {
         Alert.alert('Success', 'Signed up successfully');
         const data = await response.json();
         console.log(data);
-        navigation.navigate('Join');
+        navigation.navigate('JoinScreen');
       } else {
         const data = await response.json();
         Alert.alert('Error1', data.message || 'Failed to sign up');

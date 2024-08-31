@@ -53,7 +53,7 @@ const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
   let cumulativeValue = 0;
 
   // 목표 전력량이 없을 경우 기본 색상과 메시지 설정
-  if (!targetData) {
+  if (!targetData || targetData.targetPower <= 0) {
     return (
       <View>
         <Svg

@@ -70,7 +70,7 @@ const Join = ({navigation}) => {
       <View style={styles.signup}>
         <Text style={styles.signupText}>회원으로 가입하시겠습니끼?</Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Signup')}
+          onPress={() => navigation.navigate('SignupScreen')}
           style={styles.signupBtn}>
           <Text style={styles.signupBtnText}>회원가입</Text>
         </TouchableOpacity>
