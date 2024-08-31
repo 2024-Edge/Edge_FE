@@ -67,7 +67,7 @@ const Mypage = ({navigation}) => {
         </View>
         <View style={styles.stats}>
           <Text style={styles.statLabel}>에너지 소비가 가장 많은 전기기기</Text>
-          <Text style={styles.statValue}>거실 전등 1</Text>
+          <Text style={styles.statValue}>거실 전등1</Text>
         </View>
         <View style={styles.stats}>
           <Text style={styles.statLabel}>1월 대비 절약(%)</Text>

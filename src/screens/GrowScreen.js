@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
 import Modal from 'react-native-modal';
@@ -178,127 +185,131 @@ const Grow = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      {showCongrats ? (
-        <TouchableOpacity style={styles.congratsContainer} onPress={resetLevel}>
-          <Text style={styles.congratsTitle}>축하드려요!</Text>
-          <Text style={styles.congratsText}>
-            5개월 간의 노력 끝에, {'\n'}
-            지키미님만의 숲이 만들어졌어요. {'\n'}
-            지키미님은 그동안 총
-          </Text>
-          <Text style={styles.congratsEnergy}>
-            {targetPower - actualPower}kWh
-          </Text>
-          <Text style={styles.congratsText}>의 전력을 절약했어요!</Text>
-        </TouchableOpacity>
-      ) : (
-        <>
-          <Text style={styles.title}>지키미님의 새싹</Text>
-          <View style={styles.progressBarContainer}>
-            <Text style={styles.levelText}>Lv {level}</Text>
-            <ProgressBar
-              progress={progress}
-              color="#4CAF50"
-              style={styles.progressBar}
-            />
-          </View>
-          <Text style={styles.textintro}>{getText()}</Text>
-          <View style={styles.seedlingImagebox}>
-            <Image
-              source={getSeedlingImage()}
-              style={styles.seedlingImage}
-              resizeMode="contain"
-            />
-          </View>
-
-          <TouchableOpacity style={styles.button} onPress={toggleModal}>
-            <Text style={styles.buttonText}>목표 달성 현황</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        {showCongrats ? (
+          <TouchableOpacity
+            style={styles.congratsContainer}
+            onPress={resetLevel}>
+            <Text style={styles.congratsTitle}>축하드려요!</Text>
+            <Text style={styles.congratsText}>
+              5개월 간의 노력 끝에, {'\n'}
+              지키미님만의 숲이 만들어졌어요. {'\n'}
+              지키미님은 그동안 총
+            </Text>
+            <Text style={styles.congratsEnergy}>
+              {targetPower - actualPower}kWh
+            </Text>
+            <Text style={styles.congratsText}>의 전력을 절약했어요!</Text>
           </TouchableOpacity>
-        </>
-      )}
-      <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={toggleModal}
-        style={styles.modal}
-        swipeDirection="down"
-        onSwipeComplete={toggleModal}
-        propagateSwipe={true}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader} />
-          <Text style={styles.modalLabel}>이번 달 목표 전력량</Text>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalValue}>{targetPower} kWh</Text>
-          </View>
-          <Text style={styles.modalLabel}>이번 달 목표 달성도</Text>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalValue}>32%</Text>
-          </View>
+        ) : (
+          <>
+            <Text style={styles.title}>지키미님의 새싹</Text>
+            <View style={styles.progressBarContainer}>
+              <Text style={styles.levelText}>Lv {level}</Text>
+              <ProgressBar
+                progress={progress}
+                color="#4CAF50"
+                style={styles.progressBar}
+              />
+            </View>
+            <Text style={styles.textintro}>{getText()}</Text>
+            <View style={styles.seedlingImagebox}>
+              <Image
+                source={getSeedlingImage()}
+                style={styles.seedlingImage}
+                resizeMode="contain"
+              />
+            </View>
 
-          <View style={styles.calendar}>
-            {showDetails ? (
-              <View style={styles.detailsContainer}>
-                <View style={styles.detailHeader}>
-                  <Text style={styles.detailDate}>{selectedDate}</Text>
-                  <TouchableOpacity onPress={handleBackToCalendar}>
-                    <Text style={styles.backButton}>{'<'}</Text>
-                  </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={toggleModal}>
+              <Text style={styles.buttonText}>목표 달성 현황</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={toggleModal}
+          style={styles.modal}
+          swipeDirection="down"
+          onSwipeComplete={toggleModal}
+          propagateSwipe={true}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader} />
+            <Text style={styles.modalLabel}>이번 달 목표 전력량</Text>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalValue}>{targetPower} kWh</Text>
+            </View>
+            <Text style={styles.modalLabel}>이번 달 목표 달성도</Text>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalValue}>32%</Text>
+            </View>
+
+            <View style={styles.calendar}>
+              {showDetails ? (
+                <View style={styles.detailsContainer}>
+                  <View style={styles.detailHeader}>
+                    <Text style={styles.detailDate}>{selectedDate}</Text>
+                    <TouchableOpacity onPress={handleBackToCalendar}>
+                      <Text style={styles.backButton}>{'<'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={{fontSize: 16, color: 'black'}}>
+                    당일 전력소비량
+                  </Text>
+                  <Text
+                    style={[
+                      styles.consumptionText,
+                      {color: energyConsumption.color},
+                      styles.centeredText,
+                    ]}>
+                    {energyConsumption.consumption}
+                  </Text>
                 </View>
-                <Text style={{fontSize: 16, color: 'black'}}>
-                  당일 전력소비량
-                </Text>
-                <Text
-                  style={[
-                    styles.consumptionText,
-                    {color: energyConsumption.color},
-                    styles.centeredText,
-                  ]}>
-                  {energyConsumption.consumption}
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.calendar}>
-                <Calendar
-                  current={'2024-08-01'}
-                  markedDates={markedDates}
-                  onDayPress={handleDayPress}
-                  theme={{
-                    backgroundColor: '#E8F5E9',
-                    calendarBackground: '#E8F5E9',
-                    textSectionTitleColor: '#000',
-                    selectedDayBackgroundColor: '#00adf5',
-                    selectedDayTextColor: '#ffffff',
-                    todayTextColor: '#00adf5',
-                    dayTextColor: '#000000',
-                    textDisabledColor: '#d9e1e8',
-                    dotColor: '#00adf5',
-                    selectedDotColor: '#ffffff',
-                    arrowColor: '#000000',
-                    monthTextColor: '#000000',
-                    textDayFontFamily: 'monospace',
-                    textMonthFontFamily: 'monospace',
-                    textDayHeaderFontFamily: 'monospace',
-                    textDayFontWeight: '300',
-                    textMonthFontWeight: 'bold',
-                    textDayHeaderFontWeight: '300',
-                    textDayFontSize: 14,
-                    textMonthFontSize: 18,
-                    textDayHeaderFontSize: 14,
-                  }}
-                  monthFormat={'yyyy년 MM월'}
-                  hideArrows={false}
-                  hideExtraDays={true}
-                  disableMonthChange={true}
-                  firstDay={1}
-                  hideDayNames={true}
-                  showWeekNumbers={false}
-                />
-              </View>
-            )}
+              ) : (
+                <View style={styles.calendar}>
+                  <Calendar
+                    current={'2024-08-01'}
+                    markedDates={markedDates}
+                    onDayPress={handleDayPress}
+                    theme={{
+                      backgroundColor: '#E8F5E9',
+                      calendarBackground: '#E8F5E9',
+                      textSectionTitleColor: '#000',
+                      selectedDayBackgroundColor: '#00adf5',
+                      selectedDayTextColor: '#ffffff',
+                      todayTextColor: '#00adf5',
+                      dayTextColor: '#000000',
+                      textDisabledColor: '#d9e1e8',
+                      dotColor: '#00adf5',
+                      selectedDotColor: '#ffffff',
+                      arrowColor: '#000000',
+                      monthTextColor: '#000000',
+                      textDayFontFamily: 'monospace',
+                      textMonthFontFamily: 'monospace',
+                      textDayHeaderFontFamily: 'monospace',
+                      textDayFontWeight: '300',
+                      textMonthFontWeight: 'bold',
+                      textDayHeaderFontWeight: '300',
+                      textDayFontSize: 14,
+                      textMonthFontSize: 18,
+                      textDayHeaderFontSize: 14,
+                    }}
+                    monthFormat={'yyyy년 MM월'}
+                    hideArrows={false}
+                    hideExtraDays={true}
+                    disableMonthChange={true}
+                    firstDay={1}
+                    hideDayNames={true}
+                    showWeekNumbers={false}
+                  />
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 };
 

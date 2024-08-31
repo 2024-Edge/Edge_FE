@@ -314,7 +314,7 @@ const Home = ({navigation}) => {
             </View>
             <View style={styles.controlContainer}>
               <Text style={styles.controlSubtitle}>거실</Text>
-              <Text style={styles.controlText}>메인 전등</Text>
+              <Text style={styles.controlText}>전등1</Text>
               <View style={styles.controlBtn}>
                 <Switch
                   trackColor={{false: '#767577', true: '#4BA669'}}
