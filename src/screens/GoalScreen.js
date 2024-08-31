@@ -84,7 +84,6 @@ const Goal = () => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        console.log('Access Token:', accessToken);
         const response = await fetch(
           'https://edge-backend.store/level/target',
           {
@@ -101,7 +100,7 @@ const Goal = () => {
 
         if (response.ok) {
           Alert.alert('Success', '목표 전력량이 성공적으로 저장되었습니다.');
-          navigation.navigate('Home');
+          navigation.navigate('HomeMain');
         } else {
           const errorData = await response.json();
           Alert.alert(

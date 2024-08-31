@@ -9,8 +9,7 @@ function Logout({navigation}) {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
-      setIsLoggedIn(false); // 로그아웃 시 isLoggedIn 상태를 false로 변경
-      // navigation.navigate('Join'); // 이 부분은 필요 없습니다.
+      setIsLoggedIn(false);
     } catch (error) {
       console.error('Error during logout:', error);
       Alert.alert('Error', 'Failed to log out. Please try again.');

@@ -1,6 +1,6 @@
-// src/DonutChart.js
-import React from 'react';
-import {View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Svg,
   Circle,
@@ -10,18 +10,50 @@ import {
   FeDropShadow,
 } from 'react-native-svg';
 
-const DonutChart = ({
-  data,
-  radius = 100,
-  strokeWidth = 20,
-  centerText,
-  onPress, // onPress prop 추가
-}) => {
+const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
+  const [targetData, setTargetData] = useState(null);
+
+  useEffect(() => {
+    const fetchTargetData = async () => {
+      try {
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (accessToken) {
+          console.log('Access Token:', accessToken);
+          const response = await fetch('https://edge-backend.store/level', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            setTargetData(result.data);
+          } else {
+            const errorData = await response.json();
+            Alert.alert(
+              'Error',
+              errorData.message || 'Failed to fetch target data',
+            );
+          }
+        } else {
+          Alert.alert('Error', 'No access token found');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        Alert.alert('Error', 'An error occurred while fetching target data');
+      }
+    };
+
+    fetchTargetData();
+  }, []);
+
   const total = data.reduce((sum, item) => sum + item.value, 0);
   let cumulativeValue = 0;
 
-  // 데이터가 없을 경우 기본 색상으로 설정
-  if (total === 0) {
+  // 목표 전력량이 없을 경우 기본 색상과 메시지 설정
+  if (!targetData || targetData.targetPower <= 0) {
     return (
       <View>
         <Svg
@@ -38,30 +70,28 @@ const DonutChart = ({
             </Filter>
           </Defs>
           <Circle
-            cx={radius + strokeWidth} // 가운데 원의 x 좌표
-            cy={radius + strokeWidth} // 가운데 원의 y 좌표
-            r={radius} // 원의 반지름
-            stroke="rgba(217, 217, 217, 0.3)" // 기본 색상
-            strokeWidth={strokeWidth} // 원의 두께
-            fill="none" // 채우기 색상
-            filter="url(#shadow)" // 그림자 필터 적용
+            cx={radius + strokeWidth}
+            cy={radius + strokeWidth}
+            r={radius}
+            stroke="rgba(217, 217, 217, 0.3)"
+            strokeWidth={strokeWidth}
+            fill="none"
+            filter="url(#shadow)"
           />
           <Circle
-            cx={radius + strokeWidth} // 가운데 원의 x 좌표
-            cy={radius + strokeWidth} // 가운데 원의 y 좌표
-            r={radius - strokeWidth} // 가운데 원의 반지름 (내부 원)
-            fill="white" // 가운데 원의 색상
+            cx={radius + strokeWidth}
+            cy={radius + strokeWidth}
+            r={radius - strokeWidth}
+            fill="white"
           />
-          {/* 클릭 가능한 가운데 텍스트 추가 */}
           <SvgText
-            x={radius + strokeWidth} // x 좌표
-            y={radius + strokeWidth} // y 좌표
-            textAnchor="middle" // 텍스트 중앙 정렬
-            alignmentBaseline="middle" // 수직 중앙 정렬
-            fontSize="16" // 글자 크기
-            fill="#4BA568" // 글자 색상
-            onPress={onPress} // 클릭 이벤트
-          >
+            x={radius + strokeWidth}
+            y={radius + strokeWidth}
+            textAnchor="middle"
+            alignmentBaseline="middle"
+            fontSize="16"
+            fill="#4BA568"
+            onPress={onPress}>
             이번달 목표 설정하기
           </SvgText>
         </Svg>
@@ -69,25 +99,28 @@ const DonutChart = ({
     );
   }
 
+  // 목표 전력량이 있을 경우 차트와 텍스트 렌더링
   const circles = data.map((item, index) => {
     const {value, color} = item;
     const circumference = 2 * Math.PI * radius;
     const offset = (cumulativeValue / total) * circumference;
-
     cumulativeValue += value;
 
     return (
       <Circle
         key={index}
-        cx={radius + strokeWidth} // 원의 중심 x 좌표
-        cy={radius + strokeWidth} // 원의 중심 y 좌표
-        r={radius} // 원의 반지름
-        stroke={color} // 원의 색상
-        strokeWidth={strokeWidth} // 원의 두께
-        fill="none" // 채우기 색상
-        strokeDasharray={`${circumference} ${circumference}`} // 대시 배열 설정
-        strokeDashoffset={offset} // 시작 점 조정
-        filter="url(#shadow)" // 그림자 필터 적용
+        cx={radius + strokeWidth}
+        cy={radius + strokeWidth}
+        r={radius}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeDasharray={`${circumference} ${circumference}`}
+        strokeDashoffset={offset}
+        filter="url(#shadow)"
+        transform={`rotate(-90 ${radius + strokeWidth} ${
+          radius + strokeWidth
+        })`}
       />
     );
   });
@@ -109,22 +142,20 @@ const DonutChart = ({
         </Defs>
         {circles}
         <Circle
-          cx={radius + strokeWidth} // 가운데 원의 x 좌표
-          cy={radius + strokeWidth} // 가운데 원의 y 좌표
-          r={radius - strokeWidth} // 가운데 원의 반지름 (내부 원)
-          fill="white" // 가운데 원의 색상
+          cx={radius + strokeWidth}
+          cy={radius + strokeWidth}
+          r={radius - strokeWidth}
+          fill="white"
         />
-        {/* 클릭 가능한 가운데 텍스트 추가 */}
         <SvgText
-          x={radius + strokeWidth} // x 좌표
-          y={radius + strokeWidth} // y 좌표
-          textAnchor="middle" // 텍스트 중앙 정렬
-          alignmentBaseline="middle" // 수직 중앙 정렬
-          fontSize="16" // 글자 크기
-          fill="black" // 글자 색상
-          onPress={onPress} // 클릭 이벤트
-        >
-          {centerText}
+          x={radius + strokeWidth}
+          y={radius + strokeWidth}
+          textAnchor="middle"
+          alignmentBaseline="middle"
+          fontSize="16"
+          fill="black"
+          onPress={onPress}>
+          {targetData.targetPower}
         </SvgText>
       </Svg>
     </View>

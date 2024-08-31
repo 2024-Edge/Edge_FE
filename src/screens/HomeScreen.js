@@ -40,7 +40,6 @@ const Home = ({navigation}) => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        console.log('Access Token:', accessToken);
         const response = await fetch(
           'https://edge-backend.store/api/power/status',
           {
@@ -142,7 +141,7 @@ const Home = ({navigation}) => {
             radius={100}
             strokeWidth={40}
             centerText=""
-            onPress={() => navigation.navigate('Goal')} // onPress prop 전달
+            onPress={() => navigation.navigate('GoalScreen')} // onPress prop 전달
           />
         </View>
         <View style={styles.power}>
