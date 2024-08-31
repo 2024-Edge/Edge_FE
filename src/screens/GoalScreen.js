@@ -91,7 +91,7 @@ const Goal = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `${accessToken}`, // Bearer 인증 추가
+              Authorization: `${accessToken}`,
             },
             body: JSON.stringify({
               targetPower: targetPower,

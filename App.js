@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, createContext} from 'react';
 import {Image, View, ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
@@ -21,6 +21,8 @@ const HomeStack = createStackNavigator();
 const MypageStack = createStackNavigator();
 const GrowStack = createStackNavigator();
 
+export const AuthContext = createContext(); // AuthContext 생성
+
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen
@@ -36,11 +38,6 @@ const HomeStackScreen = () => (
     <HomeStack.Screen
       name="Control"
       component={Control}
-      options={{headerShown: false}}
-    />
-    <HomeStack.Screen
-      name="Join"
-      component={Join}
       options={{headerShown: false}}
     />
   </HomeStack.Navigator>
@@ -77,11 +74,6 @@ const AuthStackScreen = () => (
     <AuthStack.Screen
       name="Signup"
       component={Signup}
-      options={{headerShown: false}}
-    />
-    <AuthStack.Screen
-      name="Home"
-      component={Home}
       options={{headerShown: false}}
     />
   </AuthStack.Navigator>
@@ -166,8 +158,8 @@ const App = () => {
   }
 
   return (
-    <NavigationContainer>
-      <>
+    <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn}}>
+      <NavigationContainer>
         {isLoggedIn ? (
           <>
             <Header />
@@ -176,8 +168,8 @@ const App = () => {
         ) : (
           <AuthStackScreen />
         )}
-      </>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 };
 
