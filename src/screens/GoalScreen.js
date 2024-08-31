@@ -84,7 +84,6 @@ const Goal = () => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        console.log('Access Token:', accessToken);
         const response = await fetch(
           'https://edge-backend.store/level/target',
           {

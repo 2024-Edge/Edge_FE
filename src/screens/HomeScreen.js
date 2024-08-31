@@ -40,7 +40,6 @@ const Home = ({navigation}) => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        console.log('Access Token:', accessToken);
         const response = await fetch(
           'https://edge-backend.store/api/power/status',
           {

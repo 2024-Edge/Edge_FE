@@ -5,8 +5,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
-import Header from './src/components/Header';
 
+import Header from './src/components/Header';
 import Home from './src/screens/HomeScreen';
 import Goal from './src/screens/GoalScreen';
 import Mypage from './src/screens/MypageScreen';
@@ -20,66 +20,63 @@ const AuthStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const MypageStack = createStackNavigator();
 const GrowStack = createStackNavigator();
+export const AuthContext = createContext();
 
-export const AuthContext = createContext(); // AuthContext 생성
-
+// HomeStack의 화면 구성
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen
-      name="Home"
+      name="HomeMain" // 고유한 이름 설정
       component={Home}
       options={{headerShown: false}}
     />
     <HomeStack.Screen
-      name="Goal"
+      name="GoalScreen" // 고유한 이름 설정
       component={Goal}
-      options={{headerShown: false}}
-    />
-    <HomeStack.Screen
-      name="Control"
-      component={Control}
       options={{headerShown: false}}
     />
   </HomeStack.Navigator>
 );
 
+// MypageStack의 화면 구성
 const MypageStackScreen = () => (
   <MypageStack.Navigator>
     <MypageStack.Screen
-      name="Mypage"
+      name="MypageMain" // 고유한 이름 설정
       component={Mypage}
       options={{headerShown: false}}
     />
   </MypageStack.Navigator>
 );
 
+// GrowStack의 화면 구성
 const GrowStackScreen = () => (
   <GrowStack.Navigator>
     <GrowStack.Screen
-      name="Grow"
+      name="GrowMain" // 고유한 이름 설정
       component={Grow}
       options={{headerShown: false}}
     />
   </GrowStack.Navigator>
 );
 
-// 인증 스택 네비게이터
+// AuthStack의 화면 구성
 const AuthStackScreen = () => (
   <AuthStack.Navigator>
     <AuthStack.Screen
-      name="Join"
+      name="JoinScreen" // 고유한 이름 설정
       component={Join}
       options={{headerShown: false}}
     />
     <AuthStack.Screen
-      name="Signup"
+      name="SignupScreen" // 고유한 이름 설정
       component={Signup}
       options={{headerShown: false}}
     />
   </AuthStack.Navigator>
 );
 
-// 메인 탭 네비게이터
+// 메인 탭 네비게이터 구성
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({route}) => ({
@@ -109,17 +106,17 @@ const TabNavigator = () => (
       },
     })}>
     <Tab.Screen
-      name="Home"
+      name="Home" // 고유한 이름 설정
       component={HomeStackScreen}
       options={{headerShown: false}}
     />
     <Tab.Screen
-      name="Grow"
+      name="Grow" // 고유한 이름 설정
       component={GrowStackScreen}
       options={{headerShown: false}}
     />
     <Tab.Screen
-      name="Mypage"
+      name="Mypage" // 고유한 이름 설정
       component={MypageStackScreen}
       options={{headerShown: false}}
     />
