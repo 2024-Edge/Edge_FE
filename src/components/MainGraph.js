@@ -12,7 +12,15 @@ const MainGraph = ({percent5, percent8}) => {
         <View style={styles.barContainer}>
           <View style={[styles.mySavingsBar, {width: `${barWidth}%`}]} />
           <View
-            style={[styles.lineAt5Percent, {left: `${linePosition + 4}%`}]}
+            style={[
+              styles.lineAt5Percent,
+              {
+                left: `${linePosition + 4}%`,
+                height: 24,
+                width: 2,
+                backgroundColor: '#646464',
+              },
+            ]}
           />
           <View style={styles.remainingBar} />
         </View>
@@ -48,7 +56,7 @@ const styles = StyleSheet.create({
   graphTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
     color: '#757575',
   },
   graphContainer: {
@@ -65,7 +73,7 @@ const styles = StyleSheet.create({
   },
   mySavingsBar: {
     height: 20,
-    backgroundColor: '#81C784',
+    backgroundColor: '#4BA669',
   },
   lineAt5Percent: {
     position: 'absolute',
@@ -118,12 +126,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#81C784',
+    borderBottomColor: '#4BA669',
     marginTop: 4,
   },
   legendContainer: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 40,
   },
   legendItem: {
     flexDirection: 'row',
@@ -133,7 +141,7 @@ const styles = StyleSheet.create({
   legendColorBoxMySavings: {
     width: 15,
     height: 15,
-    backgroundColor: '#81C784',
+    backgroundColor: '#4BA669',
     marginRight: 8,
   },
   legendColorBoxAverage: {
