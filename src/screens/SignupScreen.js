@@ -6,40 +6,76 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 const Signup = ({navigation}) => {
   const [formdata, setFormdata] = useState({
-    id: '',
+    username: '',
+    password: '',
     name: '',
-    pwd: '',
   });
+
+  const handleInputChange = (key, value) => {
+    setFormdata({
+      ...formdata,
+      [key]: value,
+    });
+  };
+
+  const handleSignup = async () => {
+    try {
+      const response = await fetch('https://edge-backend.store/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formdata.username,
+          password: formdata.password,
+          name: formdata.name,
+        }),
+      });
+
+      console.log('Response:', response);
+
+      if (response.ok) {
+        // HTTP 상태 코드가 200번대인 경우
+        Alert.alert('Success', 'Signed up successfully');
+        const data = await response.json();
+        console.log(data);
+        navigation.navigate('Join');
+      } else {
+        const data = await response.json();
+        Alert.alert('Error1', data.message || 'Failed to sign up');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      Alert.alert('Error2', 'An error occurred');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Image source={require('../img/logo4.png')} style={styles.logo}></Image>
       <View style={styles.join}>
         <TextInput
-          value={formdata.id}
+          value={formdata.username}
           placeholder="아이디를 입력해주세요"
-          keyboardType="text"
-          onChangeText={setFormdata}
+          onChangeText={value => handleInputChange('username', value)}
           style={styles.input}></TextInput>
         <TextInput
           value={formdata.name}
           placeholder="이름을 입력해주세요"
-          keyboardType="text"
-          onChangeText={setFormdata}
+          onChangeText={value => handleInputChange('name', value)}
           style={styles.input}></TextInput>
         <TextInput
-          value={formdata.pwd}
+          value={formdata.password}
           placeholder="비밀번호를 입력해주세요"
           secureTextEntry={true}
-          onChangeText={setFormdata}
+          onChangeText={value => handleInputChange('password', value)}
           style={styles.input}></TextInput>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Join')}
-          style={styles.btn}>
+        <TouchableOpacity onPress={handleSignup} style={styles.btn}>
           <Text style={styles.btnText}>회원가입</Text>
         </TouchableOpacity>
       </View>

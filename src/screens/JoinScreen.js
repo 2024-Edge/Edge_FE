@@ -6,31 +6,64 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Join = ({navigation}) => {
-  const [id, setId] = useState();
-  const [pwd, setPwd] = useState();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('https://edge-backend.store/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+      console.log('Response Headers:', [...response.headers]);
+
+      if (response.ok) {
+        const accessToken = response.headers.get('accesstoken');
+
+        if (accessToken) {
+          await AsyncStorage.setItem('accessToken', accessToken);
+
+          navigation.navigate('Home');
+        } else {
+          Alert.alert('Error', 'No access token found in the response');
+        }
+      } else {
+        const data = await response.json();
+        Alert.alert('Error1', data.message || 'Failed to log in');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      Alert.alert('Error2', 'An error occurred');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Image source={require('../img/logo4.png')} style={styles.logo}></Image>
       <View style={styles.join}>
         <TextInput
-          value={id}
+          value={username}
           placeholder="아이디를 입력해주세요"
-          keyboardType="text"
-          onChangeText={setId}
+          onChangeText={setUsername}
           style={styles.input}></TextInput>
         <TextInput
-          value={pwd}
+          value={password}
           placeholder="비밀번호를 입력해주세요"
           secureTextEntry={true}
-          onChangeText={setPwd}
+          onChangeText={setPassword}
           style={styles.input}></TextInput>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
-          style={styles.btn}>
+        <TouchableOpacity onPress={handleLogin} style={styles.btn}>
           <Text style={styles.btnText}>로그인</Text>
         </TouchableOpacity>
       </View>
