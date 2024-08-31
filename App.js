@@ -146,7 +146,7 @@ const App = () => {
     const checkLoginStatus = async () => {
       try {
         const userToken = await AsyncStorage.getItem('accessToken');
-        setIsLoggedIn(!!userToken); // 토큰이 존재하면 true, 없으면 false
+        setIsLoggedIn(!!userToken);
       } catch (e) {
         console.error(e);
       } finally {

@@ -27,9 +27,67 @@ const Home = ({navigation}) => {
   };
 
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const [isEnabled2, setIsEnabled2] = useState(false);
+  const [isEnabled3, setIsEnabled3] = useState(false);
+  const [isEnabled4, setIsEnabled4] = useState(false);
+
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
+  const toggleSwitch3 = () => setIsEnabled3(previousState => !previousState);
+  const toggleSwitch4 = () => setIsEnabled4(previousState => !previousState);
+
+  const fetchStatus = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken) {
+        console.log('Access Token:', accessToken);
+        const response = await fetch(
+          'https://edge-backend.store/api/power/status',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${accessToken}`, // 'Bearer' 인증 추가
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Power Status:', data);
+          data.forEach(item => {
+            switch (item.id) {
+              case 1:
+                setIsEnabled(item.status);
+                break;
+              case 2:
+                setIsEnabled2(item.status);
+                break;
+              case 3:
+                setIsEnabled3(item.status);
+                break;
+              case 4:
+                setIsEnabled4(item.status);
+                break;
+              default:
+                break;
+            }
+          });
+        } else {
+          const errorData = await response.json();
+          Alert.alert(
+            'Error',
+            errorData.message || 'Failed to fetch power status',
+          );
+        }
+      } else {
+        Alert.alert('Error', 'No access token found');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      Alert.alert('Error', 'An error occurred while fetching power status');
+    }
+  };
+
   const data = [];
 
   const [userdata, setUserdata] = useState('');
@@ -39,7 +97,6 @@ const Home = ({navigation}) => {
       // AsyncStorage에서 액세스 토큰 가져오기
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        console.log('Access Token:', accessToken);
         const response = await fetch('https://edge-backend.store/mypage', {
           method: 'GET',
           headers: {
@@ -50,7 +107,6 @@ const Home = ({navigation}) => {
 
         if (response.ok) {
           const result = await response.json();
-          console.log('User Data:', result);
           setUserdata(result.data);
         } else {
           const errorData = await response.json();
@@ -71,6 +127,7 @@ const Home = ({navigation}) => {
   // 컴포넌트가 마운트될 때 사용자 데이터 가져오기
   useEffect(() => {
     fetchUserdata();
+    fetchStatus();
   }, []);
 
   return (
@@ -113,7 +170,7 @@ const Home = ({navigation}) => {
           <View style={styles.controlContent}>
             <View style={styles.controlContainer}>
               <Text style={styles.controlSubtitle}>거실</Text>
-              <Text style={styles.controlText}>거실 메인 전등 1</Text>
+              <Text style={styles.controlText}>에어컨</Text>
               <View style={styles.controlBtn}>
                 <Switch
                   trackColor={{false: '#767577', true: '#4BA669'}}
@@ -125,8 +182,8 @@ const Home = ({navigation}) => {
               </View>
             </View>
             <View style={styles.controlContainer}>
-              <Text style={styles.controlSubtitle}>거실</Text>
-              <Text style={styles.controlText}>거실 메인 전등 2</Text>
+              <Text style={styles.controlSubtitle}>안방</Text>
+              <Text style={styles.controlText}>가습기</Text>
               <View style={styles.controlBtn}>
                 <Switch
                   trackColor={{false: '#767577', true: '#4BA669'}}
@@ -134,6 +191,32 @@ const Home = ({navigation}) => {
                   ios_backgroundColor="#A2A2A2"
                   onValueChange={toggleSwitch2}
                   value={isEnabled2}
+                />
+              </View>
+            </View>
+            <View style={styles.controlContainer}>
+              <Text style={styles.controlSubtitle}>거실</Text>
+              <Text style={styles.controlText}>공기청정기</Text>
+              <View style={styles.controlBtn}>
+                <Switch
+                  trackColor={{false: '#767577', true: '#4BA669'}}
+                  thumbColor={isEnabled3 ? '#f4f3f4' : '#f4f3f4'}
+                  ios_backgroundColor="#A2A2A2"
+                  onValueChange={toggleSwitch3}
+                  value={isEnabled3}
+                />
+              </View>
+            </View>
+            <View style={styles.controlContainer}>
+              <Text style={styles.controlSubtitle}>거실</Text>
+              <Text style={styles.controlText}>메인 전등</Text>
+              <View style={styles.controlBtn}>
+                <Switch
+                  trackColor={{false: '#767577', true: '#4BA669'}}
+                  thumbColor={isEnabled4 ? '#f4f3f4' : '#f4f3f4'}
+                  ios_backgroundColor="#A2A2A2"
+                  onValueChange={toggleSwitch4}
+                  value={isEnabled4}
                 />
               </View>
             </View>
@@ -247,7 +330,7 @@ const styles = StyleSheet.create({
   controlContent: {
     width: '85%',
     alignItems: 'center',
-    marginTop: -180,
+    marginTop: -30,
   },
   controlContainer: {
     backgroundColor: '#ffffff',
