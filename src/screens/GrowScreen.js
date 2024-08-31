@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
 import Modal from 'react-native-modal';
@@ -15,21 +8,78 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Grow = ({navigation}) => {
   const [level, setLevel] = useState(1);
-  const [progress, setProgress] = useState(0.5);
+  const [progress, setProgress] = useState(0.0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
   const [energyConsumption, setEnergyConsumption] = useState(null);
   const [targetPower, setTargetPower] = useState(0.0);
+  const [actualPower, setActualPower] = useState(0.0);
 
-  const energyData = {
-    '2023-02-01': {consumption: '2kWh', color: 'green'},
-    '2023-02-02': {consumption: '3kWh', color: 'green'},
-    '2023-02-03': {consumption: '2.5kWh', color: 'green'},
-    '2023-02-04': {consumption: '4kWh', color: 'red'},
-    '2023-02-05': {consumption: '2kWh', color: 'green'},
+  const dailyTarget = targetPower / 31;
+  console.log(dailyTarget);
+  // 기존 energyData에 color 값을 추가하는 함수
+  const updateEnergyDataWithColor = (data, dailyTarget) => {
+    return Object.keys(data).reduce((acc, date) => {
+      const consumptionValue = parseFloat(data[date].consumption);
+      const color = consumptionValue > dailyTarget ? 'red' : 'green';
+      acc[date] = {...data[date], color};
+      return acc;
+    }, {});
   };
+  // energyData에 color 값을 추가
+  const energyData = updateEnergyDataWithColor(
+    {
+      '2024-08-01': {consumption: '12.3kWh'},
+      '2024-08-02': {consumption: '15.1kWh'},
+      '2024-08-03': {consumption: '18.7kWh'},
+      '2024-08-04': {consumption: '20.2kWh'},
+      '2024-08-05': {consumption: '17.3kWh'},
+      '2024-08-06': {consumption: '19.5kWh'},
+      '2024-08-07': {consumption: '22.4kWh'},
+      '2024-08-08': {consumption: '13.2kWh'},
+      '2024-08-09': {consumption: '14.6kWh'},
+      '2024-08-10': {consumption: '21.7kWh'},
+      '2024-08-11': {consumption: '16.9kWh'},
+      '2024-08-12': {consumption: '18.3kWh'},
+      '2024-08-13': {consumption: '12.8kWh'},
+      '2024-08-14': {consumption: '14.9kWh'},
+      '2024-08-15': {consumption: '17.5kWh'},
+      '2024-08-16': {consumption: '20.8kWh'},
+      '2024-08-17': {consumption: '13.7kWh'},
+      '2024-08-18': {consumption: '15.6kWh'},
+      '2024-08-19': {consumption: '19.1kWh'},
+      '2024-08-20': {consumption: '14.3kWh'},
+      '2024-08-21': {consumption: '22.7kWh'},
+      '2024-08-22': {consumption: '20.4kWh'},
+      '2024-08-23': {consumption: '12.6kWh'},
+      '2024-08-24': {consumption: '16.4kWh'},
+      '2024-08-25': {consumption: '18.2kWh'},
+      '2024-08-26': {consumption: '15.9kWh'},
+      '2024-08-27': {consumption: '21.3kWh'},
+      '2024-08-28': {consumption: '13.5kWh'},
+      '2024-08-29': {consumption: '14.8kWh'},
+      '2024-08-30': {consumption: '22.1kWh'},
+      '2024-08-31': {consumption: '19.7kWh'},
+    },
+    dailyTarget,
+  );
+  // 모든 consumption 값을 더함
+  const totalConsumption = Object.values(energyData).reduce(
+    (acc, {consumption}) => {
+      return acc + parseFloat(consumption);
+    },
+    0,
+  );
+
+  console.log(`Total Consumption: ${totalConsumption}kWh`);
+
+  const markedDates = Object.keys(energyData).reduce((acc, date) => {
+    const {color} = energyData[date];
+    acc[date] = {marked: true, dotColor: color};
+    return acc;
+  }, {});
   useEffect(() => {
     const fetchSproutLevel = async () => {
       try {
@@ -51,7 +101,8 @@ const Grow = ({navigation}) => {
 
           if (response.ok) {
             setLevel(data.data.sproutLevel);
-            setTargetPower(data.data.targetPower); // API에서 가져온 목표 전력량을 상태로 설정
+            setTargetPower(data.data.targetPower);
+            setActualPower(data.data.actualPower);
           } else {
             console.error('Failed to retrieve user information');
           }
@@ -65,6 +116,7 @@ const Grow = ({navigation}) => {
 
     fetchSproutLevel();
   }, []);
+
   const handleDayPress = day => {
     const date = day.dateString;
     setSelectedDate(date);
@@ -79,9 +131,11 @@ const Grow = ({navigation}) => {
   };
 
   const getSeedlingImage = () => {
-    switch (level) {
+    const normalizedLevel = ((level - 1) % 5) + 1;
+
+    switch (normalizedLevel) {
       case 1:
-        return require('../img/sprout.png'); // Image for level 1
+        return require('../img/sprout.png');
       case 2:
         return require('../img/sprout2.png');
       case 3:
@@ -91,48 +145,32 @@ const Grow = ({navigation}) => {
       case 5:
         return require('../img/sprout5.png');
       default:
-        return require('../img/sprout.png'); // Default image
+        return require('../img/sprout.png');
     }
   };
 
   const getText = () => {
-    switch (level) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-        return '목표 전력량을 달성하여, \n 지키미만의 새싹을 키워보세요';
-      default:
-        return '목표 전력량을 달성하여, \n 지키미만의 새싹을 키워보세요';
-    }
+    return '목표 전력량을 달성하여, \n 지키미만의 새싹을 키워보세요';
   };
 
   const handleLevelUp = () => {
-    if (level < 5) {
-      // Allow level-up only if the current level is less than 5
-      if (progress >= 1.0) {
-        setLevel(level + 1); // Increase the level
-        setProgress(0); // Reset the progress
-      } else {
-        const newProgress = progress + 0.5; // Increase progress by 0.05
-        setProgress(newProgress > 1 ? 1 : newProgress); // Ensure progress doesn't exceed 1.0
-      }
-    } else if (level === 5) {
-      // At level 5, only allow progress to reach 1.0 but don't increase the level
-      if (progress < 1.0) {
-        const newProgress = progress + 0.5;
-        setProgress(newProgress > 1 ? 1 : newProgress);
-      } else if (progress == 1.0) {
+    if (progress >= 1.0) {
+      if (level % 5 === 0) {
         setShowCongrats(true);
       }
+      const nextLevel = level + 1;
+      setLevel(nextLevel);
+      setProgress(0);
+    } else {
+      const newProgress = progress + 0.25;
+      setProgress(newProgress > 1 ? 1 : newProgress);
+      const nextLevel = level + 1;
+      setLevel(nextLevel);
     }
   };
 
   const resetLevel = () => {
     setShowCongrats(false);
-    setLevel(1); // 레벨 1로 초기화
-    setProgress(0); // 진행도 초기화
   };
 
   const toggleModal = () => {
@@ -145,11 +183,13 @@ const Grow = ({navigation}) => {
         <TouchableOpacity style={styles.congratsContainer} onPress={resetLevel}>
           <Text style={styles.congratsTitle}>축하드려요!</Text>
           <Text style={styles.congratsText}>
-            20개월 간의 노력 끝에, {'\n'}
+            5개월 간의 노력 끝에, {'\n'}
             지키미님만의 숲이 만들어졌어요. {'\n'}
             지키미님은 그동안 총
           </Text>
-          <Text style={styles.congratsEnergy}>247kWh</Text>
+          <Text style={styles.congratsEnergy}>
+            {targetPower - actualPower}kWh
+          </Text>
           <Text style={styles.congratsText}>의 전력을 절약했어요!</Text>
         </TouchableOpacity>
       ) : (
@@ -175,10 +215,6 @@ const Grow = ({navigation}) => {
           <TouchableOpacity style={styles.button} onPress={toggleModal}>
             <Text style={styles.buttonText}>목표 달성 현황</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.button} onPress={handleLevelUp}>
-            <Text style={styles.buttonText}>레벨 업</Text>
-          </TouchableOpacity>
         </>
       )}
       <Modal
@@ -196,7 +232,7 @@ const Grow = ({navigation}) => {
           </View>
           <Text style={styles.modalLabel}>이번 달 목표 달성도</Text>
           <View style={styles.modalBox}>
-            <Text style={styles.modalValue}>42%</Text>
+            <Text style={styles.modalValue}>32%</Text>
           </View>
 
           <View style={styles.calendar}>
@@ -223,14 +259,8 @@ const Grow = ({navigation}) => {
             ) : (
               <View style={styles.calendar}>
                 <Calendar
-                  current={'2023-02-01'}
-                  markedDates={{
-                    '2023-02-01': {marked: true, dotColor: 'green'},
-                    '2023-02-02': {marked: true, dotColor: 'green'},
-                    '2023-02-03': {marked: true, dotColor: 'green'},
-                    '2023-02-04': {marked: true, dotColor: 'red'},
-                    '2023-02-05': {marked: true, dotColor: 'green'},
-                  }}
+                  current={'2024-08-01'}
+                  markedDates={markedDates}
                   onDayPress={handleDayPress}
                   theme={{
                     backgroundColor: '#E8F5E9',
@@ -336,24 +366,24 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   seedlingImagebox: {
-    alignItems: 'center', // 부모 뷰에서 자식 요소를 가로로 가운데 정렬
-    justifyContent: 'center', // 세로로 가운데 정렬
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   seedlingImage: {
-    width: 100, // 원하는 이미지의 너비
-    height: 200, // 원하는 이미지의 높이
+    width: 100,
+    height: 200,
     resizeMode: 'contain',
     marginTop: 50,
   },
   button: {
-    backgroundColor: '#E1E1E1', // 버튼 배경색
+    backgroundColor: '#E1E1E1',
     width: 150,
     height: 56,
     borderRadius: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10, // 버튼 사이 간격
+    marginVertical: 10,
     marginLeft: 90,
   },
   buttonText: {
@@ -409,7 +439,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     padding: 20,
     borderRadius: 10,
-    alignItems: 'flex-start', // 왼쪽 정렬
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   detailHeader: {
@@ -421,7 +451,7 @@ const styles = StyleSheet.create({
   detailDate: {
     fontSize: 16,
     fontWeight: 'bold',
-    backgroundColor: '#E8F5E9', // 연한 초록색 배경
+    backgroundColor: '#E8F5E9',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 28,

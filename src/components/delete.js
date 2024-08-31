@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../../App'; // App.js에서 AuthContext 가져오기
 
 const Delete = ({navigation}) => {
+  const {setIsLoggedIn} = useContext(AuthContext);
   const handleDelete = async () => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
@@ -22,9 +24,10 @@ const Delete = ({navigation}) => {
         if (response.ok) {
           // 성공적으로 회원 탈퇴가 되었을 경우
           await AsyncStorage.removeItem('accessToken'); // 토큰 삭제
+          setIsLoggedIn(false); // 로그인 상태 해제
           navigation.reset({
             index: 0,
-            routes: [{name: 'Home'}], // 초기 화면으로 이동
+            routes: [{name: 'Join'}], // Join 화면으로 이동
           });
         } else {
           console.error(

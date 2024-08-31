@@ -53,13 +53,13 @@ const Mypage = ({navigation}) => {
       {/* 에너지 절약 성과 섹션 */}
       <View style={styles.savingsSection}>
         <Text style={styles.sectionTitle}>지키미님의</Text>
-        <Text style={styles.sectionSubtitle}>2월 에너지 절약 성과</Text>
+        <Text style={styles.sectionSubtitle}>8월 에너지 절약 성과</Text>
         <Text style={styles.totalEnergy}>총 에너지 사용량</Text>
-        <Text style={styles.energyValue}>450kWh</Text>
+        <Text style={styles.energyValue}>536.5kWh</Text>
         <View style={styles.divider} />
         <View style={styles.stats}>
           <Text style={styles.statLabel}>하루 평균 사용량</Text>
-          <Text style={styles.statValue}>15kWh</Text>
+          <Text style={styles.statValue}>17.3kWh</Text>
         </View>
         <View style={styles.stats}>
           <Text style={styles.statLabel}>에너지 소비가 많은 요일</Text>
@@ -71,7 +71,7 @@ const Mypage = ({navigation}) => {
         </View>
         <View style={styles.stats}>
           <Text style={styles.statLabel}>1월 대비 절약(%)</Text>
-          <Text style={styles.statValue}>8%</Text>
+          <Text style={styles.statValue}>28%</Text>
         </View>
         {/* MainGraph 컴포넌트를 여기서 사용 */}
         <View style={styles.graphSection}>
