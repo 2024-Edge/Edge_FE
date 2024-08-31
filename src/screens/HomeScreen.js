@@ -333,7 +333,6 @@ const Home = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-        <Logout navigation={navigation} />
       </ScrollView>
     </View>
   );
