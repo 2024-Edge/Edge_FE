@@ -1,8 +1,53 @@
 import React from 'react';
+import {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, ScrollView} from 'react-native';
 import MainGraph from '../components/MainGraph'; // MainGraph 컴포넌트를 가져옵니다
+import Logout from '../components/logout';
+import Delete from '../components/delete';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Mypage = ({navigation}) => {
+  const [botResponses, setBotResponses] = useState([]); // 봇 응답을 배열로 저장할 상태
+
+  useEffect(() => {
+    const fetchSproutLevel = async () => {
+      try {
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (accessToken) {
+          console.log('Access Token:', accessToken);
+
+          const response = await fetch(
+            'https://edge-backend.store/bot/chat?prompt=절약솔루션을 알려줘?', // 올바른 경로로 수정
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `${accessToken}`,
+              },
+            },
+          );
+          if (response.ok) {
+            const data = await response.text();
+            console.log('API Response:', data);
+            // 1~4번 항목만 추출하여 배열로 저장
+            const solutionsArray = data
+              .match(/^\d\..+/gm) // 각 항목이 '1. ', '2. ', '3. ', '4. '로 시작한다고 가정
+              .map(item => item.trim()); // 각 항목의 앞뒤 공백 제거
+            setBotResponses(solutionsArray); // 봇 응답을 배열로 저장
+          } else {
+            console.error('Failed to retrieve user information');
+          }
+        } else {
+          console.error('No access token found');
+        }
+      } catch (error) {
+        console.error('Error fetching sprout level:', error);
+      }
+    };
+
+    fetchSproutLevel();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       {/* 에너지 절약 성과 섹션 */}
@@ -32,27 +77,25 @@ const Mypage = ({navigation}) => {
         <View style={styles.graphSection}>
           <MainGraph percent5={20} percent8={28} />
         </View>
+        <View style={styles.solutionsSection}>
+          <Text style={styles.solutionTitle}>지키미님을 위한</Text>
+          <Text style={styles.solutionSubtitle}>절약 솔루션</Text>
+          {botResponses.map((response, index) => (
+            <View key={index} style={styles.solutionBox}>
+              <Text style={styles.solutionText}>{response}</Text>
+            </View>
+          ))}
+        </View>
       </View>
-
-      {/* 절약 솔루션 섹션 */}
-      <View style={styles.solutionsSection}>
-        <Text style={styles.solutionTitle}>지키미님을 위한</Text>
-        <Text style={styles.solutionSubtitle}>절약 솔루션</Text>
-        <View style={styles.solutionBox}>
-          <Text style={styles.solutionText}>
-            주말 동안 자연광을 최대한 활용해보세요.
-          </Text>
-        </View>
-        <View style={styles.solutionBox}>
-          <Text style={styles.solutionText}>
-            거실 전등을 LED 전구로 교체해보세요.
-          </Text>
-        </View>
-        <View style={styles.solutionBox}>
-          <Text style={styles.solutionText}>
-            거실에 구역을 나누어서 개별 조명을 설치해보세요.
-          </Text>
-        </View>
+      <View style={styles.outoutBox}>
+        <Logout
+          navigation={navigation}
+          style={{backgroundColor: 'transparent'}}
+        />
+        <Delete
+          navigation={navigation}
+          style={{backgroundColor: 'transparent'}}
+        />
       </View>
     </ScrollView>
   );
@@ -61,7 +104,7 @@ const Mypage = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // 전체 배경색
+    backgroundColor: '#FaFaFa', // 전체 배경색
     padding: 16,
   },
   savingsSection: {
@@ -115,8 +158,8 @@ const styles = StyleSheet.create({
   },
   solutionsSection: {
     backgroundColor: '#FFFFFF',
-    padding: 20,
     borderRadius: 10,
+    marginTop: 60,
   },
   solutionTitle: {
     fontSize: 20,
@@ -130,14 +173,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   solutionBox: {
-    backgroundColor: '#C5E1A5',
+    backgroundColor: '#4BA669',
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
+
+    // 그림자 효과 추가
+    shadowColor: '#000', // 그림자 색상
+    shadowOffset: {width: 0, height: 2}, // 그림자의 오프셋
+    shadowOpacity: 0.25, // 그림자의 불투명도
+    shadowRadius: 3.84, // 그림자의 반경
+    elevation: 5, // Android에서 그림자 효과 적용
   },
   solutionText: {
     fontSize: 16,
-    color: '#000000',
+    color: '#fff',
+  },
+  outoutBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: '20',
   },
 });
 

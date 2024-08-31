@@ -21,6 +21,7 @@ const Grow = ({navigation}) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
   const [energyConsumption, setEnergyConsumption] = useState(null);
+  const [targetPower, setTargetPower] = useState(0.0);
 
   const energyData = {
     '2023-02-01': {consumption: '2kWh', color: 'green'},
@@ -50,6 +51,7 @@ const Grow = ({navigation}) => {
 
           if (response.ok) {
             setLevel(data.data.sproutLevel);
+            setTargetPower(data.data.targetPower); // API에서 가져온 목표 전력량을 상태로 설정
           } else {
             console.error('Failed to retrieve user information');
           }
@@ -190,7 +192,7 @@ const Grow = ({navigation}) => {
           <View style={styles.modalHeader} />
           <Text style={styles.modalLabel}>이번 달 목표 전력량</Text>
           <View style={styles.modalBox}>
-            <Text style={styles.modalValue}>50kWh</Text>
+            <Text style={styles.modalValue}>{targetPower} kWh</Text>
           </View>
           <Text style={styles.modalLabel}>이번 달 목표 달성도</Text>
           <View style={styles.modalBox}>

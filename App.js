@@ -17,6 +17,7 @@ import Control from './src/screens/ControlScreen';
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
+const MainStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const MypageStack = createStackNavigator();
 const GrowStack = createStackNavigator();
@@ -96,8 +97,8 @@ const TabNavigator = () => (
 
         if (route.name === 'Home') {
           iconName = focused
-            ? require('./src/img/home_check.png')
-            : require('./src/img/home.png');
+            ? require('./src/img/home_check.png') // 활성화된 탭일 때 이미지
+            : require('./src/img/home.png'); // 비활성화된 탭일 때 이미지
         } else if (route.name === 'Grow') {
           iconName = focused
             ? require('./src/img/logo2.png')
@@ -108,12 +109,13 @@ const TabNavigator = () => (
             : require('./src/img/user.png');
         }
 
+        // 이미지를 렌더링합니다.
         return <Image source={iconName} style={{width: 37, height: 36}} />;
       },
       tabBarLabel: () => null,
       tabBarStyle: {
-        height: 80,
-        paddingBottom: 10,
+        height: 80, // 탭 높이를 80으로 설정
+        paddingBottom: 10, // 아이콘과 탭의 아래 여백
       },
     })}>
     <Tab.Screen
