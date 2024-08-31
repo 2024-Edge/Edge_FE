@@ -18,7 +18,6 @@ const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
       try {
         const accessToken = await AsyncStorage.getItem('accessToken');
         if (accessToken) {
-          console.log('Access Token:', accessToken);
           const response = await fetch('https://edge-backend.store/level', {
             method: 'GET',
             headers: {
@@ -47,7 +46,7 @@ const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
     };
 
     fetchTargetData();
-  }, []);
+  }, [targetData]);
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
   let cumulativeValue = 0;
@@ -125,6 +124,12 @@ const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
     );
   });
 
+  // targetData.targetPower가 0보다 크면 비율을 계산하여 중앙에 표시
+  const percentage =
+    targetData && targetData.targetPower > 0
+      ? Math.min(Math.round((total / targetData.targetPower) * 100), 100)
+      : 0;
+
   return (
     <View>
       <Svg
@@ -152,10 +157,10 @@ const DonutChart = ({data, radius = 100, strokeWidth = 20, onPress}) => {
           y={radius + strokeWidth}
           textAnchor="middle"
           alignmentBaseline="middle"
-          fontSize="16"
+          fontSize="32"
           fill="black"
           onPress={onPress}>
-          {targetData.targetPower}
+          {percentage}%
         </SvgText>
       </Svg>
     </View>
